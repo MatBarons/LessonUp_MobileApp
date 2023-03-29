@@ -1,57 +1,16 @@
-# IUM Project
+# progetto_ium
 
-> #### *Barone Matteo* `951558` <a href="mailto:matteo.barone415@edu.unito.it">`matteo.barone415@edu.unito.it`</a>
+A new Flutter project.
 
-> #### *Gratii Oliviu* `944575` <a href="mailto:oliviu.gratii@edu.unito.it">`oliviu.gratii@edu.unito.it`</a>
+## Getting Started
 
-## Good Practices
-### Comments
-- Use doxygen-like comments
+This project is a starting point for a Flutter application.
 
-### Functions / Classes
-- Use camelCase syntax
+A few resources to get you started if this is your first Flutter project:
 
-### Variables / Constants
-- Use snake_case syntax lowercase for variables
-- Use SNAKE_CASE syntax uppercase for constants
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-
-## Roadmap
-### Front END
-
-- [X] Routes
-- [X] RootPage
-  - [X] Custom NavigationBar
-- [X] HomePage
-  - [X] AppBar
-  - [X] BySubject/ByProfessors buttons
-  - [X] Next lessons form
-- [X] Cart
-- [X] My Calendar
-  - [X] Custom Calendar
-  - [X] Next lessons form
-- [X] Orders & Returns
-  - [X] Last lessons form
-- [X] My Profile
-  - [X] Form with data
-  - [X] Change data
-  - [X] Change profile picture
-- [X] Search by Professor
-  - [X] Professor form(data + stars)
-- [X] Search by Subject
-- [X] Settings
-  - [X] Notifications
-  - [X] Theme
-    - [X] Dark Theme
-    - [X] Colorblind Theme
-  - [X] Help
-    - [X] Contact Us
-  
-### Back END
-
-- [X] Database
-- [ ] DAO
-  - [ ] C.R.U.D operations
-- [ ] API
-  - [ ] Validators & Controllers (Dart) 
-  - [ ] JSON conversion from C.R.U.D
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
