@@ -228,12 +228,8 @@ class _LessonsCartState extends State<LessonsCart> {
                     //CANCELLA
                     IconButton(
                       onPressed: () async{
-                        List<Lecture> list = await SessionManager().get("cart_list").then((value) => lectureFromJson(value));
-                        print("print 1: $list");
-                        print("print 1 1/2: ${widget.list[index]}");
-                        list.remove(widget.list[index]);
-                        print("print 2: $list");
-                        await SessionManager().set("cart_list",lecturesToJson(list));
+                        widget.list.remove(widget.list[index]);
+                        await SessionManager().set("cart_list",lecturesToJson(widget.list));
                         _removeLesson(index);
                       setState(() {});
                       }, 
