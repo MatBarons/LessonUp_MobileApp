@@ -91,8 +91,13 @@ class ApiLecture{
   }
 
   void changeStatus(Lecture lecture,String status) async{
+    String day = lecture.date.substring(0,2);
+    String month = lecture.date.substring(3,5);
+    String year = lecture.date.substring(6,9);
+    String newDate = "$year-$month-$day";
+    
     Response response = await post(
-      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status&date=${lecture.date}&time=${lecture.time}&subject=${lecture.subject}&professor=${lecture.email}'),
+      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status&date=$newDate&time=${lecture.time}&subject=${lecture.subject}&professor=${lecture.email}'),
     );
     if(response.statusCode == 200){
       print("status changed correctly");
@@ -102,8 +107,16 @@ class ApiLecture{
   }
 
   void changeStatusAndStudent(Lecture lecture,String status,String? student) async{
+    print("studente: $student");
+    print("time: ${lecture.time}");
+    String time = "${lecture.time}:00";
+    print("time2: $time");
+    String day = lecture.date.substring(0,2);
+    String month = lecture.date.substring(3,5);
+    String year = lecture.date.substring(6,10);
+    String newDate = "$year-$month-$day";
     Response response = await post(
-      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status&student=$student&date=${lecture.date}&time=${lecture.time}&subject=${lecture.subject}&professor=${lecture.email}'),
+      Uri.parse('http://$ip/backend/api/lecture?path=changeStatusAndStudent&status=$status&student=$student&date=$newDate&time=$time&subject=${lecture.subject}&professor=${lecture.email}'),
     );
     if(response.statusCode == 200){
       print("status and student changed correctly");

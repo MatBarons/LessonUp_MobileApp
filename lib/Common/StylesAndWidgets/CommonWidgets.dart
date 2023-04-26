@@ -227,7 +227,13 @@ class _LessonsCartState extends State<LessonsCart> {
                     const SizedBox(height: 15),
                     //CANCELLA
                     IconButton(
-                      onPressed: () {
+                      onPressed: () async{
+                        List<Lecture> list = await SessionManager().get("cart_list").then((value) => lectureFromJson(value));
+                        print("print 1: $list");
+                        print("print 1 1/2: ${widget.list[index]}");
+                        list.remove(widget.list[index]);
+                        print("print 2: $list");
+                        await SessionManager().set("cart_list",lecturesToJson(list));
                         _removeLesson(index);
                       setState(() {});
                       }, 

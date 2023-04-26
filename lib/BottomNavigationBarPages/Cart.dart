@@ -99,7 +99,6 @@ class _CartState extends State<Cart> {
                         labelEmpty = "Grazie per aver acquistato!";
                         for(Lecture lecture in list){
                           ApiLecture().changeStatusAndStudent(lecture,"booked",student);
-                          list.remove(lecture);
                           //svuota il cart_list nel session manager
                         }
                         //inserire invio al Database
