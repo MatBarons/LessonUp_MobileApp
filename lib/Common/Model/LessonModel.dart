@@ -9,7 +9,7 @@ List<Lecture> lectureFromJson(String str) =>List<Lecture>.from(json.decode(str).
 
 String lecturesToJson(List<Lecture>? data) => json.encode(data == null ? [] : List<dynamic>.from(data.map((x) => x.toJson())).toString());
 
-String ip = "172.18.103.129:8080";
+String ip = "172.18.110.67:8080";
 
 class Lecture{
   String name;
@@ -91,9 +91,8 @@ class ApiLecture{
   }
 
   void changeStatus(Lecture lecture,String status) async{
-    Response response = await put(
-      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status'),
-      body: json.encode(lecture.toJson())
+    Response response = await post(
+      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status&date=${lecture.date}&time=${lecture.time}&subject=${lecture.subject}&professor=${lecture.email}'),
     );
     if(response.statusCode == 200){
       print("status changed correctly");
@@ -103,9 +102,8 @@ class ApiLecture{
   }
 
   void changeStatusAndStudent(Lecture lecture,String status,String? student) async{
-    Response response = await put(
-      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status&student=$student'),
-      body: json.encode(lecture.toJson())
+    Response response = await post(
+      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status&student=$student&date=${lecture.date}&time=${lecture.time}&subject=${lecture.subject}&professor=${lecture.email}'),
     );
     if(response.statusCode == 200){
       print("status and student changed correctly");

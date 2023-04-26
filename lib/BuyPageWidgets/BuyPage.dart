@@ -50,7 +50,6 @@ class _BuyPageState extends State<BuyPage> {
   void initState(){
     super.initState();
     profEmails = _filterProfessors(pList);
-
   }
   
   @override
@@ -98,7 +97,6 @@ class _BuyPageState extends State<BuyPage> {
           FutureBuilder(
             future: ApiLecture().getLecturesBySubjectAndStatusAndDate(widget.s,"${_selectedDay!.year}-${_selectedDay!.month}-${_selectedDay!.day}", "free"), 
             builder: (context, snapshot) {
-              print("OLA");
               return snapshot.hasData ? LessonsBooking(ApiLecture().lectureByHourAndProfessor(profEmails, dList, snapshot.data!)) : const CircularProgressIndicator();
             },
           ),

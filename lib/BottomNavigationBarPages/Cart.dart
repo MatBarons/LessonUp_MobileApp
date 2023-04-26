@@ -41,9 +41,9 @@ class _CartState extends State<Cart> {
         children: [
           const SizedBox(height: 20),
           FutureBuilder(
-            future: SessionManager().get("cart_list"),
+            future: SessionManager().get("cart_list").then((value) => lectureFromJson(value)),
             builder: (context, snapshot) {
-              return snapshot.hasData ? LessonsCart(snapshot.data) : 
+              return snapshot.hasData ? LessonsCart(snapshot.data!) : 
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -86,16 +86,23 @@ class _CartState extends State<Cart> {
                     key: UniqueKey(),
                     direction: directionDismissable,
                     background: customContainer(const CircularProgressIndicator(), Theme.of(context).colorScheme.primary.withOpacity(0.7), "Pagamento in corso",context),
-                    onDismissed: (customDirection) {
+                    onDismissed: (customDirection) async{
+                      String student = await SessionManager().get("email");
+                      List<Lecture> list = await SessionManager().get("cart_list").then((value) => lectureFromJson(value));
                       setState(() {
                         if (customDirection == DismissDirection.startToEnd) {
                         iconDismissable = const Icon(Icons.check);
                         labelDismissable = "Pagamento confermato";
                         colorDismissable = Theme.of(context).colorScheme.primary;
                         directionDismissable = DismissDirection.none;
-                        
                         iconEmpty = Icon(Icons.check, color: Theme.of(context).colorScheme.primary);
                         labelEmpty = "Grazie per aver acquistato!";
+                        for(Lecture lecture in list){
+                          ApiLecture().changeStatusAndStudent(lecture,"booked",student);
+                          list.remove(lecture);
+                          //svuota il cart_list nel session manager
+                        }
+                        //inserire invio al Database
                       }
                       });
                     },

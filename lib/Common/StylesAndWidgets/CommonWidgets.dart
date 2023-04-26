@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:progetto_ium/Common/Model/LessonModel.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/TextStylesAndColors.dart';
 
@@ -337,6 +338,7 @@ class LessonsBooking extends StatefulWidget {
 class _LessonsBookingState extends State<LessonsBooking> {
   
   List<bool> isSelected = [];
+  List<Lecture> cart = [];
 
   @override
   Widget build(BuildContext context) {
@@ -385,13 +387,27 @@ class _LessonsBookingState extends State<LessonsBooking> {
                       const SizedBox(height: 15),
                       //CANCELLA
                       IconButton(
-                        onPressed: () {
+                        onPressed: () async{
+                          if (await SessionManager()
+                                        .containsKey("cart_list")) {
+                                      String json =
+                                          await (SessionManager().get("cart_list"));
+                                      cart = lectureFromJson(json);
+                                      cart.add(widget.list[index]);
+                                      await SessionManager()
+                                          .set("cart_list", lecturesToJson(cart));
+                                    } else {
+                                      List<Lecture> l = [];
+                                      l.add(widget.list[index]);
+                                      await SessionManager()
+                                          .set("cart_list", lecturesToJson(l));
+                                    }
                           setState(() {
                             isSelected[index] = !isSelected[index];
                           });
                         }, 
                         icon: isSelected[index] ? Icon(Icons.check,color: Theme.of(context).colorScheme.primary) : Icon(Icons.add,color: Theme.of(context).colorScheme.onTertiaryContainer)
-                      )                      
+                      )
                     ],
                   ),
                 ),
