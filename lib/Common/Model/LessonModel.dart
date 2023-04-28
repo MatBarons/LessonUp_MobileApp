@@ -16,7 +16,6 @@ class Lecture{
   String surname;
   String email;
   String subject;
-  //NetworkImage? image;
   String date;
   String time;
 
@@ -63,7 +62,6 @@ class ApiLecture{
     String email = await SessionManager().get("email");
     Response response = await get(
       Uri.parse("http://$ip/backend/api/lecture?path=getAllLecturesByStudentAndStatus&student=$email&status=$status"),
-      //headers: {"email":x,"role":"student"}
       );
     if(response.statusCode == 200){
       List<Lecture> lectures = [];
@@ -107,10 +105,7 @@ class ApiLecture{
   }
 
   void changeStatusAndStudent(Lecture lecture,String status,String? student) async{
-    print("studente: $student");
-    print("time: ${lecture.time}");
     String time = "${lecture.time}:00";
-    print("time2: $time");
     String day = lecture.date.substring(0,2);
     String month = lecture.date.substring(3,5);
     String year = lecture.date.substring(6,10);
@@ -128,11 +123,8 @@ class ApiLecture{
   List<Lecture> lectureByHourAndProfessor(List<String> prof,List<TimeOfDay> time, List<Lecture> listOfAll){
     List<Lecture> list = [];
     List<Lecture> tempList = [];
-    print("professori: $prof");
-    print("orario: $time");
     bool flag = false;
     if(prof.isNotEmpty || time.isNotEmpty){
-      print("Prova14214");
       if(prof.isNotEmpty && time.isEmpty){
         for(int i=0;i<listOfAll.length;i++){
           for(int j=0;i<prof.length && flag == false;j++){
@@ -179,9 +171,7 @@ class ApiLecture{
       }
     }else if(prof.isEmpty && time.isEmpty){
       list = listOfAll;
-      print("succo di frutta");
     }
-    print("sesso duro: $list");
     return list;
   }
 
@@ -195,20 +185,3 @@ List<TimeOfDay> tempListD = [
   const TimeOfDay(hour: 17, minute: 00),
   const TimeOfDay(hour: 18, minute: 00),
 ];
-/*
-List<Lecture> tempList = [
-  Lecture(name: "Matteo",surname: "Barone",email: "matteo.barone@mail.com",subject: "Matematica",date: "13/09/2001",time: "14:00",image: null),
-  Lecture(name: "Lucia", surname: "Calandra", email: "lucia.calandra@mail.com", subject: "Letteratura", date: "13/09/2001",image: null),
-  Lecture(name: "Paola", surname: "Pane", email: "paola.pane@mail.com", subject: "Inglese", datetime: DateTime.now(),image: null),
-  Lecture(name: "Andrea", surname: "Barone", email: "andrea.barone@mail.com", subject: "Fisica", datetime: DateTime.now(),image: null),
-  Lecture(name: "Giovanni", surname: "Pane", email: "giovanni.pane@mail.com", subject: "Storia", datetime: DateTime.now(),image: null)
-];
-
-
-
-*/
-//Creare metodo di fetch delle lezioni in base alla materia
-
-//Creare metodo di ricerca tra le lezioni fetchate in base ai prof
-
-//Creare metodo di ricerca tra le lezioni fetchate in base all'orario

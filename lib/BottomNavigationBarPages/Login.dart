@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
-import 'package:progetto_ium/BottomNavigationBarPages/Homepage.dart';
-import 'package:progetto_ium/Common/Model/LessonModel.dart';
+
 import 'package:progetto_ium/Common/Model/ProfessorModel.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/CommonWidgets.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/TextStylesAndColors.dart';
@@ -52,11 +50,9 @@ class _LoginState extends State<Login> {
             onTap: () async{
               isLogged = await ApiProfessor().login(emailController.text.toString().toLowerCase(),passwordController.text.toString());
               if(isLogged){
-                print(isLogged);
                 SessionManager().set("email", emailController.text.toString().toLowerCase());
                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Root()));
               }else{
-                print(isLogged);
                 loggedRow = Row(
                   children: [
                     const Icon(Icons.cancel,color: Colors.red,),
@@ -80,7 +76,8 @@ class _LoginState extends State<Login> {
           const SizedBox(height: 20),
           GestureDetector(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Homepage()));
+              SessionManager().set("email", null);
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Root()));
             },
             child: Container(
               decoration: BoxDecoration(

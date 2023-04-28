@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:progetto_ium/BuyPageWidgets/BuyPage.dart';
 import 'package:progetto_ium/Common/Model/LessonModel.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/CommonWidgets.dart';
@@ -13,8 +12,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  
-  
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +37,6 @@ class _HomepageState extends State<Homepage> {
           FutureBuilder<List<Lecture>>(
             future: ApiLecture().getLecturesByStudentAndStatus("booked"),
             builder: (context, snapshot) {
-              //print("suca: ${snapshot.data}");
               return snapshot.hasData ? 
               LessonsMain(snapshot.data!) : 
               Padding(

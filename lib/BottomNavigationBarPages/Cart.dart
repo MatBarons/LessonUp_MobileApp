@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:progetto_ium/BottomNavigationBarPages/Login.dart';
 import 'package:progetto_ium/Common/Model/LessonModel.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/CommonWidgets.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/TextStylesAndColors.dart';
@@ -87,25 +88,29 @@ class _CartState extends State<Cart> {
                     direction: directionDismissable,
                     background: customContainer(const CircularProgressIndicator(), Theme.of(context).colorScheme.primary.withOpacity(0.7), "Pagamento in corso",context),
                     onDismissed: (customDirection) async{
-                      String student = await SessionManager().get("email");
-                      List<Lecture> list = await SessionManager().get("cart_list").then((value) => lectureFromJson(value));
-                      setState(() {
-                        if (customDirection == DismissDirection.startToEnd) {
-                        iconDismissable = const Icon(Icons.check);
-                        labelDismissable = "Pagamento confermato";
-                        colorDismissable = Theme.of(context).colorScheme.primary;
-                        directionDismissable = DismissDirection.none;
-                        iconEmpty = Icon(Icons.check, color: Theme.of(context).colorScheme.primary);
-                        labelEmpty = "Grazie per aver acquistato!";
-                        for(Lecture lecture in list){
-                          ApiLecture().changeStatusAndStudent(lecture,"booked",student);
-                          
-                        }
-                        list = [];
-                        SessionManager().set("cart_list", list);
-                        //inserire invio al Database
-                      }
-                      });
+                      String? student = await SessionManager().get("email");
+                      if(student != null){
+                        List<Lecture> list = await SessionManager().get("cart_list").then((value) => lectureFromJson(value));
+                        setState(() {
+                          if (customDirection == DismissDirection.startToEnd) {
+                            iconDismissable = const Icon(Icons.check);
+                            labelDismissable = "Pagamento confermato";
+                            colorDismissable = Theme.of(context).colorScheme.primary;
+                            directionDismissable = DismissDirection.none;
+                            iconEmpty = Icon(Icons.check, color: Theme.of(context).colorScheme.primary);
+                            labelEmpty = "Grazie per aver acquistato!";
+
+                            for(Lecture lecture in list){
+                              ApiLecture().changeStatusAndStudent(lecture,"booked",student);
+                            }
+
+                            list = [];
+                            SessionManager().set("cart_list", list);
+                          }
+                        });
+                      }else{
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Login()));
+                      }    
                     },
                     child: customContainer(iconDismissable, colorDismissable, labelDismissable,context),
                   ),
