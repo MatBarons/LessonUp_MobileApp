@@ -14,17 +14,6 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
 
-
-  List<Lecture> emptyList = [];
-
-  
-
-  @override
-  void initState(){
-    super.initState();
-  }
-
-
   String labelDismissable = " Scorri per ordinare";
   Icon iconDismissable = const Icon(Icons.arrow_forward);
   Color colorDismissable = Colors.orange[500]!;
@@ -72,12 +61,11 @@ class _CartState extends State<Cart> {
                       customText("Totale", 20, Theme.of(context).colorScheme.onBackground, FontWeight.bold),
                       const SizedBox(height: 10),
                       FutureBuilder(
-                        future: SessionManager().get("cart_list"),
+                        future: SessionManager().get("cart_list").then((value) => lectureFromJson(value)),
                         builder: (context, snapshot) {
                           return customText(snapshot.hasData ? snapshot.data!.length.toString() : "0", 17, Theme.of(context).colorScheme.onBackground, FontWeight.normal);
                         },
                       )
-                      
                     ],
                   ),
                 ),

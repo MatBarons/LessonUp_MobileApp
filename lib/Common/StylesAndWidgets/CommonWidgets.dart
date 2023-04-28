@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:progetto_ium/Common/Model/LessonModel.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/TextStylesAndColors.dart';
 
@@ -32,6 +33,26 @@ class _LessonsMainState extends State<LessonsMain> {
     );
     widget.list.removeAt(i);
     ApiLecture().changeStatusAndStudent(widget.list[i],"free",null);
+  }
+  
+  Future<Event> buildEvent(Lecture lec) async {
+    return Event(
+      timeZone: "GMT+1",
+      title: 'Lezione di ${lec.subject} con Prof. ${lec.surname} ${lec.name}',
+      description: 'http://zoom.com/random_reunion',
+      location: 'Metaverso',
+      startDate: DateTime.parse(lec.date + ' ' + lec.time)
+          .subtract(Duration(hours: 1)),
+      endDate: DateTime.parse(lec.date + ' ' + lec.time),
+      allDay: false,
+      iosParams: const IOSParams(
+        reminder: Duration(hours: 1),
+        url: "zoom.com/random_reunion",
+      ),
+      androidParams: AndroidParams(
+        emailInvites: [await SessionManager().get("email")],
+      ),
+    );
   }
 
   @override
@@ -80,7 +101,59 @@ class _LessonsMainState extends State<LessonsMain> {
                     ),
                     const SizedBox(height: 15),
                     //ADD TO CALENDAR
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.calendar_month)),
+                    IconButton(onPressed: () async {
+                      setState(() {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              surfaceTintColor: Theme.of(context).colorScheme.background,
+                              backgroundColor: Theme.of(context).colorScheme.background,
+                              buttonPadding: const EdgeInsets.all(30),
+                              title: customText("Aggiungere a google calendar?", 12, Theme.of(context).colorScheme.onBackground, FontWeight.bold),
+                              actions: [
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async{
+                                        Event ev = await buildEvent(widget.list[index]);
+                                        Add2Calendar.addEvent2Cal(ev,);
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        height: 50,
+                                        width: 80,
+                                        padding: const EdgeInsetsDirectional.fromSTEB(10, 13, 0, 0),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        child: customText("Aggiungi", 16, Theme.of(context).colorScheme.onPrimary, FontWeight.normal),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 70),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        height: 50,
+                                        width: 80,
+                                        padding: const EdgeInsetsDirectional.fromSTEB(7, 13, 0, 0),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.secondaryContainer,
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        child: customText("Mantieni", 18, Theme.of(context).colorScheme.onSecondaryContainer, FontWeight.normal),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            );
+                          });
+                      });
+                    }, icon: const Icon(Icons.calendar_month)),
                     //CANCELLA
                     IconButton(onPressed: () {
                       setState(() {
@@ -96,10 +169,10 @@ class _LessonsMainState extends State<LessonsMain> {
                                 Row(
                                   children: [
                                     GestureDetector(
-                                      onTap: () {
+                                      onTap: () async{
+                                        ApiLecture().changeStatusAndStudent(widget.list[index], "free", null);
                                         Navigator.of(context).pop();
                                         _removeLesson(index);
-                                        //changeStatus to Free
                                         setState(() {});
                                       },
                                       child: Container(
