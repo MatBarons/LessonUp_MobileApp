@@ -93,7 +93,7 @@ class _CartState extends State<Cart> {
                             }
 
                             list = [];
-                            SessionManager().set("cart_list", list);
+                            SessionManager().set("cart_list", <dynamic>{});
                           }
                         });
                       }else{

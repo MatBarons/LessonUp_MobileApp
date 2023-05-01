@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import 'package:progetto_ium/Common/Model/LessonModel.dart';
-import 'package:progetto_ium/Common/Model/ProfessorModel.dart';
 import 'package:progetto_ium/Common/StylesAndWidgets/CommonWidgets.dart';
 
 class BuyPage extends StatefulWidget {

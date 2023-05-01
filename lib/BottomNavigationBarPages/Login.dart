@@ -48,7 +48,7 @@ class _LoginState extends State<Login> {
           const SizedBox(height: 50),
           GestureDetector(
             onTap: () async{
-              isLogged = await ApiProfessor().login(emailController.text.toString().toLowerCase(),passwordController.text.toString());
+              isLogged = await ApiUser().login(emailController.text.toString().toLowerCase(),passwordController.text.toString());
               if(isLogged){
                 SessionManager().set("email", emailController.text.toString().toLowerCase());
                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Root()));

@@ -7,31 +7,41 @@ import 'package:http/http.dart';
 List<Lecture> lectureFromJson(String str) =>List<Lecture>.from(json.decode(str).map((x) => Lecture.fromJson(x)));
 
 
-String lecturesToJson(List<Lecture>? data) => json.encode(data == null ? [] : List<dynamic>.from(data.map((x) => x.toJson())).toString());
+String lecturesToJson(List<Lecture>? data) => json.encode(data == null ? [] : List<dynamic>.from(data.map((x) => x.toJsonDisplay())).toString());
 
-String ip = "172.18.110.67:8080";
+String ip = "192.168.1.11:8080";
 
 class Lecture{
-  String name;
-  String surname;
+  String? name;
+  String? surname;
   String email;
   String subject;
   String date;
   String time;
+  String? status;
+  String? student;
 
-  Lecture({
+  Lecture.display({
     required this.name,
     required this.surname,
     required this.subject,
     required this.email,
     required this.date,
     required this.time,
+
   });
 
-  
+  Lecture.toSend({
+    required this.subject,
+    required this.email,
+    required this.date,
+    required this.time,
+    required this.status,
+    required this.student
+  });
 
   factory Lecture.fromJson(Map<String, dynamic> json){
-    return Lecture(
+    return Lecture.display(
       date: json["date"],
       time : json["time"],
       name: json["name"],
@@ -40,17 +50,26 @@ class Lecture{
       subject: json["subject"],
     );
   }
+  
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJsonDisplay() => {
     "\"date\"": "\"" + date + "\"",
     "\"time\"": "\"" + time + "\"",
-    "\"name\"": "\"" + name + "\"",
-    "\"surname\"": "\"" + surname + "\"",
+    "\"name\"": "\"" + name! + "\"",
+    "\"surname\"": "\"" + surname! + "\"",
     "\"email\"": "\"" + email + "\"",
     "\"subject\"": "\"" + subject + "\"",
   };
 
-  
+  Map<String,dynamic> toJsonToSend() =>{
+    'date': date,
+    'time': time,
+    'professor': email,
+    'subject': subject,
+    'status': status,
+    'student': student,
+  };
+
 
 
 }
@@ -60,8 +79,12 @@ class ApiLecture{
 
   Future<List<Lecture>> getLecturesByStudentAndStatus(String status) async {
     String email = await SessionManager().get("email");
+    String token = await SessionManager().get("token");
     Response response = await get(
       Uri.parse("http://$ip/backend/api/lecture?path=getAllLecturesByStudentAndStatus&student=$email&status=$status"),
+      headers: {
+        'Authorization': token
+      }
       );
     if(response.statusCode == 200){
       List<Lecture> lectures = [];
@@ -78,7 +101,13 @@ class ApiLecture{
   }
 
   Future<List<Lecture>> getLecturesBySubjectAndStatusAndDate(String subject,String d,String status) async {
-    Response response = await get(Uri.parse('http://$ip/backend/api/lecture?path=getAllLecturesBySubjectAndStatusAndDate&subject=$subject&status=$status&date=$d'));
+    String token = await SessionManager().get("token");
+    Response response = await get(
+      Uri.parse('http://$ip/backend/api/lecture?path=getAllLecturesBySubjectAndStatusAndDate&subject=$subject&status=$status&date=$d'),
+      headers: {
+        'Authorization': token
+      }
+      );
     if(response.statusCode == 200){
       final List<dynamic> lecturesJson = jsonDecode(response.body);
       final List<Lecture> lectures = lecturesJson.map((json) => Lecture.fromJson(json)).toList();
@@ -93,9 +122,22 @@ class ApiLecture{
     String month = lecture.date.substring(3,5);
     String year = lecture.date.substring(6,9);
     String newDate = "$year-$month-$day";
-    
-    Response response = await post(
-      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus&status=$status&date=$newDate&time=${lecture.time}&subject=${lecture.subject}&professor=${lecture.email}'),
+    String newTime = "${lecture.time}:00";
+    Lecture newLecture = Lecture.toSend(
+      subject: lecture.subject, 
+      email: lecture.email, 
+      date: newDate, 
+      time: newTime, 
+      status: status, 
+      student: null
+      );
+    String token = await SessionManager().get("token");
+    Response response = await put(
+      Uri.parse('http://$ip/backend/api/lecture?path=changeStatus'),
+      body: json.encode(newLecture.toJsonToSend()),
+      headers: {
+        'Authorization': token
+      }
     );
     if(response.statusCode == 200){
       print("status changed correctly");
@@ -110,8 +152,22 @@ class ApiLecture{
     String month = lecture.date.substring(3,5);
     String year = lecture.date.substring(6,10);
     String newDate = "$year-$month-$day";
-    Response response = await post(
-      Uri.parse('http://$ip/backend/api/lecture?path=changeStatusAndStudent&status=$status&student=$student&date=$newDate&time=$time&subject=${lecture.subject}&professor=${lecture.email}'),
+    String newTime = "${lecture.time}:00";
+    Lecture newLecture = Lecture.toSend(
+      subject: lecture.subject, 
+      email: lecture.email, 
+      date: newDate, 
+      time: newTime, 
+      status: status, 
+      student: student
+      );
+    String token = await SessionManager().get("token");
+    Response response = await put(
+      Uri.parse('http://$ip/backend/api/lecture?path=changeStatusAndStudent'),
+      body: json.encode(newLecture.toJsonToSend()),
+      headers: {
+        'Authorization': token
+      }
     );
     if(response.statusCode == 200){
       print("status and student changed correctly");
@@ -119,62 +175,6 @@ class ApiLecture{
       throw Exception('Unexpected error occured!');
     }
   }
-
-  List<Lecture> lectureByHourAndProfessor(List<String> prof,List<TimeOfDay> time, List<Lecture> listOfAll){
-    List<Lecture> list = [];
-    List<Lecture> tempList = [];
-    bool flag = false;
-    if(prof.isNotEmpty || time.isNotEmpty){
-      if(prof.isNotEmpty && time.isEmpty){
-        for(int i=0;i<listOfAll.length;i++){
-          for(int j=0;i<prof.length && flag == false;j++){
-            if(listOfAll[i].email == prof[j]){
-              list.add(listOfAll[i]);
-              flag = true;
-            }
-          }
-          flag = false;
-        }
-      }else if(prof.isEmpty && time.isNotEmpty){
-        for(int i=0;i<listOfAll.length;i++){
-          for(int j=0;j<time.length && flag == false;j++){
-            if(listOfAll[i].time.substring(0,1) == time[j].hour.toString()){
-              list.add(listOfAll[i]);
-              flag = true;
-            }
-            flag = false;
-          }
-        }
-      }else if(prof.isNotEmpty && time.isNotEmpty){
-        for(int i=0;i<listOfAll.length;i++){
-          for(int j=0;i<prof.length && flag == false;j++){
-            if(listOfAll[i].email == prof[j]){
-              list.add(listOfAll[i]);
-              flag = true;
-            }
-          }
-          flag = false;
-        }
-        flag = false;
-        tempList = list;
-        for(int i=0;i<list.length;i++){
-          for(int j=0;i<time.length && flag == false;j++){
-            if(list[i].time.substring(0,1) == time[j].hour.toString()){
-              flag = true;
-            }
-          }
-          if(flag == false){
-            list.remove(list[i]);
-          }
-          flag = false;
-        }
-      }
-    }else if(prof.isEmpty && time.isEmpty){
-      list = listOfAll;
-    }
-    return list;
-  }
-
 }
 
 
