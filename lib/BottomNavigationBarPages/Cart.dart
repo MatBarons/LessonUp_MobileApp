@@ -79,22 +79,25 @@ class _CartState extends State<Cart> {
                       String? student = await SessionManager().get("email");
                       if(student != null){
                         List<Lecture> list = await SessionManager().get("cart_list").then((value) => lectureFromJson(value));
-                        setState(() {
-                          if (customDirection == DismissDirection.startToEnd) {
+                        if (customDirection == DismissDirection.startToEnd) {
+                          for (Lecture lecture in list) {
+                            ApiLecture().changeStatusAndStudent(
+                                lecture, "booked", student);
+                          }
+                          list.clear();
+                          await SessionManager().set("cart_list", lecturesToJson(list));
+                          setState(() {
                             iconDismissable = const Icon(Icons.check);
                             labelDismissable = "Pagamento confermato";
-                            colorDismissable = Theme.of(context).colorScheme.primary;
+                            colorDismissable =
+                                Theme.of(context).colorScheme.primary;
                             directionDismissable = DismissDirection.none;
-                            iconEmpty = Icon(Icons.check, color: Theme.of(context).colorScheme.primary);
+                            iconEmpty = Icon(Icons.check,
+                                color: Theme.of(context).colorScheme.primary);
                             labelEmpty = "Grazie per aver acquistato!";
-
-                            for(Lecture lecture in list){
-                              ApiLecture().changeStatusAndStudent(lecture,"booked",student);
-                            }
-                            list.clear();
-                            SessionManager().set("cart_list", lecturesToJson(list));
-                          }
-                        });
+                          });
+                        }
+                        
                       }else{
                           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Login()));
                       }    

@@ -107,7 +107,7 @@ class ApiLecture{
       headers: {
         'Authorization': token
       }
-      );
+    );
     if(response.statusCode == 200){
       final List<dynamic> lecturesJson = jsonDecode(response.body);
       final List<Lecture> lectures = lecturesJson.map((json) => Lecture.fromJson(json)).toList();

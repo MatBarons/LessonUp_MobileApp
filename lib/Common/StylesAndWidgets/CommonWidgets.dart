@@ -32,7 +32,6 @@ class _LessonsMainState extends State<LessonsMain> {
       duration: const Duration(milliseconds: 300),
     );
     widget.list.removeAt(i);
-    ApiLecture().changeStatusAndStudent(widget.list[i],"free",null);
   }
   
   Future<Event> buildEvent(Lecture lec) async {
@@ -470,11 +469,12 @@ class _LessonsBookingState extends State<LessonsBooking> {
                           if (await SessionManager().containsKey("cart_list")) {
                             String json =  await (SessionManager().get("cart_list"));
                             cart = lectureFromJson(json);
-                            if(cart.contains(widget.list[index]) == false || isSelected[index] == false){
+                            if(isSelected[index] == false){
                               cart.add(widget.list[index]);
                               print("QUI1");
                             }else{
-                              cart.remove(widget.list[index]);
+                              cart.removeWhere((l) => l.date == widget.list[index].time && l.time ==  widget.list[index].time &&
+                                l.email == widget.list[index].email && l.subject == widget.list[index].subject);
                               print("QUI2");
                             }
                             await SessionManager().set("cart_list", lecturesToJson(cart));
