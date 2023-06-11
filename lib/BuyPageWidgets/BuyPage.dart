@@ -15,8 +15,9 @@ class BuyPage extends StatefulWidget {
 
 class _BuyPageState extends State<BuyPage> {
 
-  DateTime _focusedDay = DateTime(2023,4,20);
-  DateTime? _selectedDay=DateTime(2023,4,20);
+
+  DateTime _focusedDay = DateTime(2023,6,13);
+  DateTime? _selectedDay=DateTime(2023,6,13);
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
   late List<Lecture> tList; //lista di 
@@ -43,7 +44,9 @@ class _BuyPageState extends State<BuyPage> {
               });
             },
             onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
+              setState((){
+                _focusedDay = focusedDay;
+              });
             },
             onFormatChanged: (newFormat) {
               setState(() {
@@ -54,10 +57,10 @@ class _BuyPageState extends State<BuyPage> {
           const SizedBox(height: 20),
           const Divider(color: Colors.grey,thickness: 1),
           const SizedBox(height: 15),
-          FutureBuilder(
+          FutureBuilder<List<Lecture>>(
             future: ApiLecture().getLecturesBySubjectAndStatusAndDate(widget.s,"${_selectedDay!.year}-${_selectedDay!.month}-${_selectedDay!.day}", "free"), 
             builder: (context, snapshot) {
-              return snapshot.hasData ? LessonsBooking(snapshot.data!) : const CircularProgressIndicator();
+              return snapshot.hasData ? LessonsBooking(snapshot.data!,snapshot.data!.length) : const CircularProgressIndicator();
             },
           ),
         ],

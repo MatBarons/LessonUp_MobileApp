@@ -91,9 +91,8 @@ class _CartState extends State<Cart> {
                             for(Lecture lecture in list){
                               ApiLecture().changeStatusAndStudent(lecture,"booked",student);
                             }
-
-                            list = [];
-                            SessionManager().set("cart_list", <dynamic>{});
+                            list.clear();
+                            SessionManager().set("cart_list", lecturesToJson(list));
                           }
                         });
                       }else{

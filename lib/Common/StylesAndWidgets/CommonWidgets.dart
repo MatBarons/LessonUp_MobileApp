@@ -259,6 +259,7 @@ class _LessonsCartState extends State<LessonsCart> {
     return Expanded(
       child: AnimatedList(
       key: _key,
+      shrinkWrap: true,
       initialItemCount: widget.list.length,
       padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
       itemBuilder: (context, index, animation) {
@@ -402,9 +403,10 @@ class _LessonsOrdersState extends State<LessonsOrders> {
 }
 
 class LessonsBooking extends StatefulWidget {
-  LessonsBooking(this.list,{super.key});
+  LessonsBooking(this.list,this.nOfElements,{super.key});
 
   List<Lecture> list;
+  int nOfElements;
 
   @override
   State<LessonsBooking> createState() => _LessonsBookingState();
@@ -418,14 +420,16 @@ class _LessonsBookingState extends State<LessonsBooking> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: AnimatedList(
-      initialItemCount: widget.list.length,
+      child: ListView.builder(
+      itemCount: widget.nOfElements,
+      //initialItemCount: widget.nOfElements,
+      shrinkWrap: true,
       padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
-      itemBuilder: (context, index, animation) {
+      itemBuilder: (context, index) {
         isSelected.add(false);
-        return SizeTransition(
+        return Container(
             key: UniqueKey(),
-            sizeFactor: animation,
+            //sizeFactor: animation,
             child: Column(
               children: [
                 Container(
@@ -463,20 +467,22 @@ class _LessonsBookingState extends State<LessonsBooking> {
                       //CANCELLA
                       IconButton(
                         onPressed: () async{
-                          if (await SessionManager()
-                                        .containsKey("cart_list")) {
-                                      String json =
-                                          await (SessionManager().get("cart_list"));
-                                      cart = lectureFromJson(json);
-                                      cart.add(widget.list[index]);
-                                      await SessionManager()
-                                          .set("cart_list", lecturesToJson(cart));
-                                    } else {
-                                      List<Lecture> l = [];
-                                      l.add(widget.list[index]);
-                                      await SessionManager()
-                                          .set("cart_list", lecturesToJson(l));
-                                    }
+                          if (await SessionManager().containsKey("cart_list")) {
+                            String json =  await (SessionManager().get("cart_list"));
+                            cart = lectureFromJson(json);
+                            if(cart.contains(widget.list[index]) == false || isSelected[index] == false){
+                              cart.add(widget.list[index]);
+                              print("QUI1");
+                            }else{
+                              cart.remove(widget.list[index]);
+                              print("QUI2");
+                            }
+                            await SessionManager().set("cart_list", lecturesToJson(cart));
+                          } else {
+                            List<Lecture> l = [];
+                            l.add(widget.list[index]);
+                            await SessionManager().set("cart_list", lecturesToJson(l));
+                          }
                           setState(() {
                             isSelected[index] = !isSelected[index];
                           });
