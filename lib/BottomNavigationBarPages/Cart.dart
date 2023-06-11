@@ -33,7 +33,7 @@ class _CartState extends State<Cart> {
           FutureBuilder(
             future: SessionManager().get("cart_list").then((value) => lectureFromJson(value)),
             builder: (context, snapshot) {
-              return snapshot.hasData ? LessonsCart(snapshot.data!) : 
+              return snapshot.hasData && snapshot.data!.length != 0 ? LessonsCart(snapshot.data!) : 
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -86,16 +86,18 @@ class _CartState extends State<Cart> {
                           }
                           list.clear();
                           await SessionManager().set("cart_list", lecturesToJson(list));
-                          setState(() {
+                          try{
+                            setState(() {
                             iconDismissable = const Icon(Icons.check);
                             labelDismissable = "Pagamento confermato";
-                            colorDismissable =
-                                Theme.of(context).colorScheme.primary;
+                            colorDismissable =Theme.of(context).colorScheme.primary;
                             directionDismissable = DismissDirection.none;
-                            iconEmpty = Icon(Icons.check,
-                                color: Theme.of(context).colorScheme.primary);
+                            iconEmpty = Icon(Icons.check,color: Theme.of(context).colorScheme.primary);
                             labelEmpty = "Grazie per aver acquistato!";
                           });
+                          }catch(error){
+
+                          }
                         }
                         
                       }else{
