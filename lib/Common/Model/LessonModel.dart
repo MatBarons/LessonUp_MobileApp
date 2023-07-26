@@ -9,7 +9,7 @@ List<Lecture> lectureFromJson(String str) =>List<Lecture>.from(json.decode(str).
 
 String lecturesToJson(List<Lecture>? data) => json.encode(data == null ? [] : List<dynamic>.from(data.map((x) => x.toJsonDisplay())).toString());
 
-String ip = "192.168.1.11:8080";
+String ip = "172.18.118.193:8080";
 
 class Lecture{
   String? name;

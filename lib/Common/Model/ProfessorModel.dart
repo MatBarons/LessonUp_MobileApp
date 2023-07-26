@@ -8,7 +8,7 @@ List<Professor> professorFromJson(String str) =>List<Professor>.from(json.decode
 
 String professorToJson(List<Professor>? data) => json.encode(data == null ? [] : List<dynamic>.from(data.map((x) => x.toJson())).toString());
 
-String ip = "192.168.1.11:8080";
+String ip = "172.18.118.193:8080";
 
 class Professor{
   String name;
